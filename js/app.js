@@ -356,6 +356,7 @@
     html += section('Last sale', rows([['Sale date', r.saleDate], ['Sale price', fmtMoney(r.salePrice)], ['Deed reference', r.deed]]));
     html += section('Location', rows([['Coordinates', `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`, 'mono copyable'], ['Data source', r.source]]));
 
+    html += `<div class="pub" id="pub"><h3 class="pub-head">Public records</h3><p class="pub-sub">Pulled live from FEMA, USDA, USGS, the Census Bureau and BLM for this parcel.</p>${PublicData.LOADERS.map((L) => `<div class="sec pub-sec" data-pub="${L.key}"><h3>${esc(L.title)}</h3><div class="skeleton" style="width:65%"></div><div class="skeleton" style="width:40%"></div></div>`).join('')}</div>`;
     const links = [
       r.link ? `<a href="${esc(r.link)}" target="_blank" rel="noopener">${icon('link')}Official county record</a>` : '',
       `<a href="https://www.google.com/search?q=${assessorQ}" target="_blank" rel="noopener">${icon('search')}Find the ${st === 'FL' ? 'property appraiser' : 'county assessor'} record</a>`,
@@ -371,6 +372,15 @@
     html += `<div class="src">${src ? `Source: ${esc(src.name)}. ` : 'Address from OpenStreetMap. '}Lines © Regrid. Records are as published by public agencies and can be out of date; confirm with the county before you rely on them.</div>`;
     showSheet(html);
     if (saved) loadPhotos(p.id);
+    PublicData.load(p, (key, title, rowsArr, err) => {
+      if (!current || current.id !== p.id) return;
+      const box = document.querySelector(`[data-pub="${key}"]`);
+      if (!box) return;
+      if (!rowsArr) { box.innerHTML = `<h3>${esc(title)}</h3><p class="pub-none">${err ? 'This source did not respond. Reopen the parcel to try again.' : 'No data for this location.'}</p>`; return; }
+      const linkRows = rowsArr.filter((r) => r[0] === '__link');
+      const dataRows = rowsArr.filter((r) => r[0] !== '__link');
+      box.innerHTML = `<h3>${esc(title)}</h3>${rows(dataRows)}${linkRows.map((r) => `<div class="links"><a href="${esc(r[1])}" target="_blank" rel="noopener">${icon('link')}${esc(r[2])}</a></div>`).join('')}`;
+    });
   }
 
   function mineHTML(s) {
