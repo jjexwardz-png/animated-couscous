@@ -40,7 +40,7 @@
 
   // ---------- map ----------
   const prefs = Store.prefs();
-  const map = L.map('map', { zoomControl: false, maxZoom: 21, worldCopyJump: true, tap: true, attributionControl: true });
+  const map = L.map('map', { zoomControl: false, minZoom: 3, maxZoom: 21, worldCopyJump: true, tap: true, attributionControl: true });
   map.attributionControl.setPrefix('');
   window.__map = map;
 

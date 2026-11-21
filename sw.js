@@ -1,6 +1,6 @@
 /* Offline shell: app files are cached so Tract opens without a connection.
    Map tiles and parcel lookups always go to the network. */
-const VERSION = 'tract-v1';
+const VERSION = 'tract-v2';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'js/sources.js', 'js/geo.js', 'js/store.js', 'js/app.js',
   'vendor/leaflet/leaflet.js', 'vendor/leaflet/leaflet.css', 'vendor/proj4.js', 'data/states.json',
